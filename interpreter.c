@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-//#include "../stack-library-c/stack.h"
-#include "../matrix-module-c/matrix.h"
+#include "stack.h"
+#include "matrix.h"
 
 enum direction {up, down, left, right, up_left, up_right, down_left, down_right};
 typedef struct coordinate coordinate;
