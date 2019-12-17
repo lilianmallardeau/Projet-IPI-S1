@@ -22,7 +22,7 @@ int is_empty(stack l) {
  * @assigns:
  * @ensures: add e to the beggining of l
  */
-void push(elem e, stack* l) {
+void push(stack_elem e, stack* l) {
   stack new = (stack) malloc(sizeof(item));
   new->head = e;
   new->tail = *l;
@@ -31,19 +31,19 @@ void push(elem e, stack* l) {
 
 /* @requires: l is a valid stack
  * @assigns: modify the stack
- * @ensures: remove the first element of the stack and return it
+ * @ensures: remove the first stack_element of the stack and return it
  */
-elem pop(stack* l) {
-  elem e = (*l)->head;
+stack_elem pop(stack* l) {
+  stack_elem e = (*l)->head;
   *l = (*l)->tail;
   return e;
 }
 
 /* @requires: l is a valid stack, index <= len(l)
  * @assigns: modify the stack
- * @ensures: insert the element e at the index-th place in the stack
+ * @ensures: insert the stack_element e at the index-th place in the stack
  */
-void insert(elem e, stack* l, int index) {
+void insert(stack_elem e, stack* l, int index) {
   stack cur = *l;
   for (int i = 0; i < index - 1; i++) {
     cur = cur->tail;
@@ -61,9 +61,9 @@ void insert(elem e, stack* l, int index) {
 
 /* @requires: l is a valid stack, index <= len(l)
  * @assigns: nothing
- * @ensures: returns the index-th element of l
+ * @ensures: returns the index-th stack_element of l
  */
-elem get(stack l, int index) {
+stack_elem get(stack l, int index) {
   for (int i = 0; i < index; i++) {
     l = l->tail;
   }
@@ -74,7 +74,7 @@ elem get(stack l, int index) {
  * @assigns: nothing
  * @ensures: returns the index of the first occurence of e, -1 if e is not in l
  */
-int get_index(elem e, stack l) {
+int get_index(stack_elem e, stack l) {
   int index = 0;
   while (l->head != e) {
     if (index > len(l))
@@ -100,7 +100,7 @@ int len(stack l) {
 
 /* @requires: l is a valid stack and doesn't loop
  * @assigns: nothing
- * @ensures: prints the stack l in the format [elem1] -> [elem2] -> ... -> []
+ * @ensures: prints the stack l in the format [stack_elem1] -> [stack_elem2] -> ... -> []
  */
 void print_list(stack l) {
   while (l != NULL) {
