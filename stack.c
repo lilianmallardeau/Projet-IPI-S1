@@ -4,7 +4,7 @@
 
 /* @requires: nothing
  * @assigns: nothing
- * @ensures: return an empty stack (a null pointer)
+ * @ensures: returns an empty stack (a null pointer)
  */
 stack create_stack() {
   return NULL;
@@ -12,15 +12,15 @@ stack create_stack() {
 
 /* @requires: l is a valid stack
  * @assigns: nothing
- * @ensures: return 1 if l is an empty stack, 0 otherwise
+ * @ensures: returns 1 if l is an empty stack, 0 otherwise
  */
 int is_empty(stack l) {
   return l == NULL;
 }
 
 /* @requires: l is a valid stack
- * @assigns:
- * @ensures: add e to the beggining of l
+ * @assigns: modifies l
+ * @ensures: adds e to the beggining of l
  */
 void push(stack_elem e, stack* l) {
   stack new = (stack) malloc(sizeof(item));
@@ -30,8 +30,8 @@ void push(stack_elem e, stack* l) {
 }
 
 /* @requires: l is a valid stack
- * @assigns: modify the stack
- * @ensures: remove the first stack_element of the stack and return it
+ * @assigns: modifies the stack
+ * @ensures: removes the first element of the stack and return it
  */
 stack_elem pop(stack* l) {
   stack_elem e = (*l)->head;
@@ -40,8 +40,8 @@ stack_elem pop(stack* l) {
 }
 
 /* @requires: l is a valid stack, index <= len(l)
- * @assigns: modify the stack
- * @ensures: insert the stack_element e at the index-th place in the stack
+ * @assigns: modifies the stack
+ * @ensures: inserts the stack_element e at the index-th place in the stack
  */
 void insert(stack_elem e, stack* l, int index) {
   stack cur = *l;
