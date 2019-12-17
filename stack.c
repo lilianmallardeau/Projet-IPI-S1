@@ -34,6 +34,8 @@ void push(stack_elem e, stack* l) {
  * @ensures: removes the first element of the stack and return it
  */
 stack_elem pop(stack* l) {
+  if (is_empty(*l))
+    return 0;
   stack_elem e = (*l)->head;
   *l = (*l)->tail;
   return e;
