@@ -68,7 +68,7 @@ int is_matrix_equal(matrix m1, matrix m2) {
 void print_matrix(matrix mat) {
   for (int i = 0; i < mat.m; i++) {
     for (int j = 0; j < mat.n; j++) {
-      printf("%2c", mat.mat[i][j]);
+      printf("%c", mat.mat[i][j]);
     }
     printf("\n");
   }
