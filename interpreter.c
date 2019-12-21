@@ -139,8 +139,8 @@ void interpreter(matrix prog) {
       case '"':
         while (current_char != '"') {
           push((int) current_char, &prog_stack);
-          move_forward(&cur, 1, prog.m, prog.n);
-          current_char = prog.mat[cur.x][cur.y];
+          move_forward(&cur, 1, prog.n, prog.m);
+          current_char = prog.mat[cur.y][cur.x];
         }
         break;
 
@@ -169,14 +169,14 @@ void interpreter(matrix prog) {
         break;
 
       case '#':
-        move_forward(&cur, pop(&prog_stack), prog.m, prog.n);
+        move_forward(&cur, pop(&prog_stack), prog.n, prog.m);
         break;
 
       case 'g':
         x = pop(&prog_stack);
         y = pop(&prog_stack);
-        if (x < prog.m && y < prog.n)
-          push((int) prog.mat[x][y], &prog_stack);
+        if (x < prog.n && y < prog.m)
+          push((int) prog.mat[y][x], &prog_stack);
         else
           push(0, &prog_stack);
         break;
@@ -187,8 +187,8 @@ void interpreter(matrix prog) {
         z = pop(&prog_stack);
         z = z > 255 ? 255 : z;
         z = z < 0 ? 0 : z;
-        if (x < prog.m && y < prog.n)
-          prog.mat[x][y] = (char) z;
+        if (x < prog.n && y < prog.m)
+          prog.mat[y][x] = (char) z;
         break;
 
       case '&':
@@ -212,7 +212,7 @@ void interpreter(matrix prog) {
       push((int)current_char - 48, &prog_stack);
     }
 
-    move_forward(&cur, 1, prog.m, prog.n);
-    current_char = prog.mat[cur.x][cur.y];
+    move_forward(&cur, 1, prog.n, prog.m);
+    current_char = prog.mat[cur.y][cur.x];
   }
 }
