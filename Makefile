@@ -18,3 +18,6 @@ cursor.o: cursor.c
 clean:
 	@echo "Cleaning up..."
 	rm -rvf *.o ${BINS}
+
+test: stack.o matrix.o cursor.o
+	$(CC) -c $^ -o $@
