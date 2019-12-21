@@ -1,0 +1,4 @@
+interpreter
+stack.o
+matrix.o
+cursor.o
