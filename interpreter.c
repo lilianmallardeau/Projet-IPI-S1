@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 //#include <ctype.h>
-#include "stack.c"
-#include "matrix.c"
-#include "cursor.c"
+#include "stack.h"
+#include "matrix.h"
+#include "cursor.h"
 
 void interpreter(matrix prog);
 
@@ -114,7 +114,7 @@ void interpreter(matrix prog) {
         break;
 
       case '\'':
-
+        cur.dir = pop(&prog_stack) % 8;
         break;
       case ']':
         rotate_ccw(&cur);
@@ -169,8 +169,7 @@ void interpreter(matrix prog) {
         break;
 
       case '#':
-        a = pop(&prog_stack);
-        move_forward(&cur, a, prog.m, prog.n);
+        move_forward(&cur, pop(&prog_stack), prog.m, prog.n);
         break;
 
       case 'g':
