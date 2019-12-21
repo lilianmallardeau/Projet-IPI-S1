@@ -2,3 +2,6 @@ interpreter
 stack.o
 matrix.o
 cursor.o
+
+test.c
+test
