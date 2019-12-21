@@ -1,5 +1,5 @@
 CC = gcc -Wall
-BINS = interpreter stack.o matrix.o cursor.o
+BINS = interpreter stack.o matrix.o cursor.o test
 
 all: interpreter
 
@@ -20,4 +20,4 @@ clean:
 	rm -rvf *.o ${BINS}
 
 test: test.c stack.o matrix.o cursor.o
-	$(CC) -c $^ -o $@
+	$(CC) $^ -o $@
