@@ -3,6 +3,11 @@
 #include <time.h>
 #include "cursor.h"
 
+/******** Static functions prototypes ********/
+static void _move_forward(cursor* cur);
+/****** Static functions prototypes END ******/
+
+
 /* @requieres: *cur is a valid cursor
  * @assigns: changes cur->dir
  * @ensures: rotates the cursor's direction from 45°
