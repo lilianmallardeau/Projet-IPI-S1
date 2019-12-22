@@ -62,7 +62,9 @@ void interpreter(matrix prog) {
   int x, y, z;
   char c;
 
-  //
+  /* The loop ends because the interpreter function is supposed to receive a
+   * valid p2d program, so it should ends with an @.
+   */
   while (current_char != '@') {
     switch (current_char) {
       case '+':
