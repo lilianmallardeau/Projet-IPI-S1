@@ -42,6 +42,11 @@ int main(int argc, char const *argv[]) {
 }
 
 /************************ Interpreter ************************/
+/* @requires: prog est une matrice contenant un programme p2d valide,
+ *   c'est à dire qui termine
+ * @assigns: nothing
+ * @ensures: execute les instructions du programme contenu dans la matrice prog
+ */
 void interpreter(matrix prog) {
   stack prog_stack;
   prog_stack = create_stack();
@@ -56,8 +61,8 @@ void interpreter(matrix prog) {
   int a, b;
   int x, y, z;
   char c;
-  // add parameters if needed
 
+  //
   while (current_char != '@') {
     switch (current_char) {
       case '+':
@@ -137,6 +142,8 @@ void interpreter(matrix prog) {
         break;
 
       case '"':
+        move_forward(&cur, 1, prog.n, prog.m);
+        current_char = prog.mat[cur.y][cur.x];
         while (current_char != '"') {
           push((int) current_char, &prog_stack);
           move_forward(&cur, 1, prog.n, prog.m);
@@ -207,11 +214,13 @@ void interpreter(matrix prog) {
         break;
       case ' ':
         break;
-    }
-    if (48 <= (int)current_char && (int)current_char <= 57) {
-      push((int)current_char - 48, &prog_stack);
+      default :
+        if (48 <= (int)current_char && (int)current_char <= 57)
+          push((int)current_char - 48, &prog_stack);
+        break;
     }
 
+    // moving cursor and updating the current character
     move_forward(&cur, 1, prog.n, prog.m);
     current_char = prog.mat[cur.y][cur.x];
   }
