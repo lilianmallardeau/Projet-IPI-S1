@@ -1,7 +1,5 @@
 interpreter
-stack.o
-matrix.o
-cursor.o
+*.o
 
 test.c
 test
