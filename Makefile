@@ -1,23 +1,19 @@
-CC = gcc -Wall -Wextra
-BINS = interpreter stack.o matrix.o cursor.o test
+CC = gcc -Wall -Wextra -g
+BINS = interpreter debugger *.o test
 
 all: interpreter
 
 interpreter: interpreter.c stack.o matrix.o cursor.o
 	$(CC) $^ -o $@
 
-stack.o: stack.c stack.h
-	$(CC) -c $< -o $@
+debugger: debugger.c stack.o matrix.o cursor.o
+	$(CC) $^ -o $@
 
-matrix.o: matrix.c matrix.h
-	$(CC) -c $< -o $@
-
-cursor.o: cursor.c cursor.h
+%.o: %.c %.h
 	$(CC) -c $< -o $@
 
 clean:
 	@echo "Cleaning up..."
-	rm -rvf *.o ${BINS}
+	rm -rvf ${BINS}
 
-test: test.c stack.o matrix.o cursor.o
-	$(CC) $^ -o $@
+re: clean all
