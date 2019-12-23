@@ -1,4 +1,4 @@
-CC = gcc -Wall
+CC = gcc -Wall -Wextra
 BINS = interpreter stack.o matrix.o cursor.o test
 
 all: interpreter
