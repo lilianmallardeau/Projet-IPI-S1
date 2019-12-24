@@ -32,7 +32,7 @@ void fill_matrix(matrix* mat, matrix_elem e) {
 /* @requieres: mat is a valid matrix
  * @assigns: allocates memory for a new matrix with same size as m and copies
  *  each element of m in the new matrix
- * @ensures: return a copy of the matrix m
+ * @ensures: returns a copy of the matrix m
  */
 matrix copy_matrix(matrix m) {
   matrix new_mat = create_matrix(m.m, m.n);
