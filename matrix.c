@@ -29,6 +29,21 @@ void fill_matrix(matrix* mat, matrix_elem e) {
   }
 }
 
+/* @requieres: mat is a valid matrix
+ * @assigns: allocates memory for a new matrix with same size as m and copies
+ *  each element of m in the new matrix
+ * @ensures: return a copy of the matrix m
+ */
+matrix copy_matrix(matrix m) {
+  matrix new_mat = create_matrix(m.m, m.n);
+  for (int i = 0; i < m.m; i++) {
+    for (int j = 0; j < m.n; j++) {
+      new_mat.mat[i][j] = m.mat[i][j];
+    }
+  }
+  return new_mat;
+}
+
 /* @requieres: x <= n, y <= m, mat is a valid matrix
  * @assigns: nothing
  * @ensures: returns the value of mat->mat[x-1][y-1]
