@@ -5,6 +5,7 @@
 /* @requieres: m > 0, n > 0
  * @assigns: allocates the memory needed for the matrix_elem** 2d array
  * @ensures: returns the freshly created matrix
+ * /!\ The matrix' content is not initialized! Use `fill_matrix` to fill the matrix.
  */
 matrix create_matrix(int m, int n) {
   matrix mat;
@@ -44,15 +45,15 @@ matrix copy_matrix(matrix m) {
   return new_mat;
 }
 
-/* @requieres: x <= n, y <= m, mat is a valid matrix
+/* @requieres: 0 < x <= mat.m, 0 < y <= mat.n, mat is a valid matrix
  * @assigns: nothing
- * @ensures: returns the value of mat->mat[x-1][y-1]
+ * @ensures: returns the value of mat.mat[x-1][y-1]
  */
 matrix_elem get_matrix_elem(matrix mat, int x, int y) {
   return mat.mat[x-1][y-1];
 }
 
-/* @requieres: x <= m, y <= n, *mat is a valid matrix
+/* @requieres: 0 < x <= mat->m, 0 < y <= mat->n, *mat is a valid matrix
  * @assigns: changes the value of mat->mat[x-1][y-1] to e
  * @ensures: changes the value of mat->mat[x-1][y-1] to e
  */
@@ -76,9 +77,9 @@ int is_matrix_equal(matrix m1, matrix m2) {
   return 1;
 }
 
-/* @requieres: x <= m, y <= n, *mat is a valid matrix
- * @assigns: changes the value of mat->mat[x][y] to e
- * @ensures: changes the value of mat->mat[x][y] to e
+/* @requieres: mat is a valid matrix
+ * @assigns: nothing
+ * @ensures: prints the matrix m
  */
 void print_matrix(matrix mat) {
   for (int i = 0; i < mat.m; i++) {
