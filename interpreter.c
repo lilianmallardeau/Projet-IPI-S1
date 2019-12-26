@@ -1,4 +1,4 @@
-#define PRINT_BEFORE_RUN 0
+#define PRINT_PROG_MATRIX_BEFORE_RUN 0
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,6 +6,7 @@
 #include "matrix.h"
 #include "cursor.h"
 #include "colors.h"
+#include "debugger.h"
 
 void interpreter(matrix prog);
 void one_step(matrix* prog, cursor* cur, stack* prog_stack);
@@ -18,7 +19,7 @@ int main(int argc, char const *argv[]) {
   if (argc < 2) {
     printf("Usage :\n");
     printf("%s prog.p2d\n", argv[0]);
-    printf("prog.p2d: the p2d program you want to run");
+    printf("prog.p2d: the p2d program you want to run\n");
     printf("\n");
     exit(1);
   }
@@ -43,7 +44,7 @@ int main(int argc, char const *argv[]) {
   }
 
   fclose(file);
-  if (PRINT_BEFORE_RUN)
+  if (PRINT_PROG_MATRIX_BEFORE_RUN)
     print_matrix(mat);
   if (debug_mode)
     debugger(mat);
@@ -75,7 +76,9 @@ void interpreter(matrix prog) {
    * valid p2d program, so it should ends with an @.
    */
   while (prog.mat[cur.y][cur.x] != '@') {
+    //getchar();
     one_step(&prog, &cur, &prog_stack);
+    //print_screen(prog, cur, prog_stack);
   }
 }
 
@@ -210,8 +213,8 @@ void one_step(matrix* prog, cursor* cur, stack* prog_stack) {
       break;
 
     case 'g':
-      x = pop(prog_stack);
       y = pop(prog_stack);
+      x = pop(prog_stack);
       if (x < prog->n && y < prog->m)
         push((int) prog->mat[y][x], prog_stack);
       else
@@ -219,8 +222,8 @@ void one_step(matrix* prog, cursor* cur, stack* prog_stack) {
       break;
 
     case 'p':
-      x = pop(prog_stack);
       y = pop(prog_stack);
+      x = pop(prog_stack);
       z = pop(prog_stack);
       z = z > 255 ? 255 : z;
       z = z < 0 ? 0 : z;
@@ -261,5 +264,22 @@ void one_step(matrix* prog, cursor* cur, stack* prog_stack) {
 /*********************************************************************/
 
 void debugger(matrix prog) {
+  stack prog_stack;
+  prog_stack = create_stack();
 
+  cursor cur;
+  cur.x = 0;
+  cur.y = 0;
+  cur.dir = right;
+
+  char* command = "\0";
+
+  /* The loop ends because the interpreter function is supposed to receive a
+   * valid p2d program, so it should ends with an @.
+   */
+  while (prog.mat[cur.y][cur.x] != '@') {
+    one_step(&prog, &cur, &prog_stack);
+    print_screen(prog, cur, prog_stack);
+
+  }
 }
