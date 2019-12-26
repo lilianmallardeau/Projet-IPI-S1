@@ -9,6 +9,8 @@ p2d: main.c interpreter.o debugger.o stack.o matrix.o cursor.o
 %.o: %.c %.h
 	$(CC) -c $< -o $@
 
+debugger: debugger.o
+
 clean:
 	@echo "Cleaning up..."
 	rm -rvf ${BINS}
