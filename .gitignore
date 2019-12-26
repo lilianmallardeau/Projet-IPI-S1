@@ -1,4 +1,4 @@
-interpreter
+p2d
 *.o
 
 test.c
