@@ -1,12 +1,9 @@
 CC = gcc -Wall -Wextra -g
-BINS = interpreter debugger *.o test
+BINS = p2d *.o
 
-all: interpreter
+all: p2d
 
-interpreter: main.c stack.o matrix.o cursor.o
-	$(CC) $^ -o $@
-
-debugger.o: debugger.c stack.o matrix.o cursor.o
+p2d: main.c interpreter.o debugger.o stack.o matrix.o cursor.o
 	$(CC) $^ -o $@
 
 %.o: %.c %.h
