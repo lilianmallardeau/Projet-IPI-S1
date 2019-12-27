@@ -20,12 +20,7 @@ int main(int argc, char const *argv[]) {
     exit(1);
   }
 
-  int debug_mode;
-  if (argc == 2) {
-    debug_mode = 0;
-  } else {
-    debug_mode = (argv[2] == "1" || FORCE_DEBUG);
-  }
+  int debug_mode = getenv("P2D_DEBUG_MODE") != NULL || FORCE_DEBUG;
 
   FILE* file = fopen(argv[1], "r");
   char* firstline = NULL;
