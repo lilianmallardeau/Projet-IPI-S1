@@ -29,8 +29,7 @@ void debugger(matrix prog_mat) {
   breakpoint breakpoints[BREAKPOINTS_BUFFER_SIZE];
 
   size_t current_history_buffer_size = HISTORY_BUFFER_SIZE;
-  prog_step saved_steps[HISTORY_BUFFER_SIZE];
-  //prog_step* saved_steps = (prog_step*) calloc(HISTORY_BUFFER_SIZE, sizeof(prog_step));
+  prog_step* saved_steps = (prog_step*) calloc(HISTORY_BUFFER_SIZE, sizeof(prog_step));
   // Saving the first step of the program, before execution
   save_step(0, prog_mat, cur, prog_stack, saved_steps, &current_history_buffer_size);
   int index = 1;
@@ -41,6 +40,7 @@ void debugger(matrix prog_mat) {
   int nbr_args;
   int a, b;
 
+  print_screen(prog_mat, cur, prog_stack);
   /* The loop ends because the debugger function is supposed to receive a
    * valid p2d program, so it should ends with an @.
    */
