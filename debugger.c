@@ -235,6 +235,8 @@ void clear_screen() {
  * @ensures: clears the console and prints the current state of execution of the program
  */
 void print_screen(matrix prog, cursor cur, stack prog_stack) {
+  printf("\n");
+
   // Printing header and character indicator
   for (int i = 0; i < prog.n + 5; i+=5) {
     printf("%5d", i);
@@ -242,7 +244,7 @@ void print_screen(matrix prog, cursor cur, stack prog_stack) {
   printf("\n    ");
   for (int i = 0; i < prog.n + 5; i++) {
     if (i == cur.x)
-      printf("v");
+      printf(BOLDYELLOW "v" RESET);
     else
       printf("%c", i%5 == 0 ? '|' : ' ');
   }
@@ -251,9 +253,9 @@ void print_screen(matrix prog, cursor cur, stack prog_stack) {
   // Printing program matrix
   for (int i = 0; i < prog.m; i++) {
     if (i%5 == 0)
-      printf("%3d%c", i, cur.y == i ? '>' : '-');
+      printf("%3d%s", i, cur.y == i ? BOLDYELLOW ">" RESET : "-");
     else
-      printf("%4c", cur.y == i ? '>' : ' ');
+      printf("%3c%s", ' ', cur.y == i ? BOLDYELLOW ">" RESET : " ");
 
     for (int j = 0; j < prog.n; j++)
       printf((cur.x == j && cur.y == i) ? BOLDRED "%c" RESET : "%c", prog.mat[i][j]);
