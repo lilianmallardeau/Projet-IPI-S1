@@ -1,5 +1,6 @@
 #define HISTORY_BUFFER_SIZE       500
 #define BREAKPOINTS_BUFFER_SIZE   100
+#define ENABLE_CLEAR_SCREEN       0
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -223,8 +224,10 @@ void prev(int* index, matrix* prog_mat, cursor* cur, stack* prog_stack, prog_ste
  * @ensures: Clears the console. Works on Linux (bash/zsh), Windows (cmd.exe) and macOS (zsh)
  */
 void clear_screen() {
+  #if ENABLE_CLEAR_SCREEN == 1
   system("@cls||clear");
   // OUI c'est crade je sais mais ça fonctionne
+  #endif
 }
 
 
