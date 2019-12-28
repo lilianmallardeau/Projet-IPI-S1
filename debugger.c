@@ -67,6 +67,7 @@ void debugger(matrix prog_mat) {
       }
     }
     else if (strcmp(command, "run") == 0) {
+      next(&index, &prog_mat, &cur, &prog_stack, saved_steps, &current_history_buffer_size);
       while (!check_breakpoint(cur.x, cur.y, breakpoints, n_breakpoints) && prog_mat.mat[cur.y][cur.x] != '@') {
         next(&index, &prog_mat, &cur, &prog_stack, saved_steps, &current_history_buffer_size);
       }
