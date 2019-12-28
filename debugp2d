@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 if [ ! -f p2d ]; then
   echo "./p2d not found. Please run \`make\`."
-  exit
+  exit 1
 fi
 export P2D_DEBUG_MODE=1
 ./p2d "$@"
