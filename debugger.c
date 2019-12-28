@@ -1,6 +1,6 @@
 #define HISTORY_BUFFER_SIZE       500
 #define BREAKPOINTS_BUFFER_SIZE   100
-#define ENABLE_CLEAR_SCREEN       0
+#define ENABLE_CLEAR_SCREEN       1
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,36 +58,35 @@ void debugger(matrix prog_mat) {
     if (strcmp(command, "step") == 0) {
       if (nbr_args == 2 && a >= 0) {
         for (int i = 0; i < a; i++) {
+          next(&index, &prog_mat, &cur, &prog_stack, saved_steps, &current_history_buffer_size);
           // Checking if the cursor is currently on a breakpoint
           if (check_breakpoint(cur.x, cur.y, breakpoints, n_breakpoints))
             break;
-          next(&index, &prog_mat, &cur, &prog_stack, saved_steps, &current_history_buffer_size);
         }
       } else {
         next(&index, &prog_mat, &cur, &prog_stack, saved_steps, &current_history_buffer_size);
       }
     }
     else if (strcmp(command, "run") == 0) {
-      next(&index, &prog_mat, &cur, &prog_stack, saved_steps, &current_history_buffer_size);
-      while (!check_breakpoint(cur.x, cur.y, breakpoints, n_breakpoints) && prog_mat.mat[cur.y][cur.x] != '@') {
+      do {
         next(&index, &prog_mat, &cur, &prog_stack, saved_steps, &current_history_buffer_size);
-      }
+      } while (!check_breakpoint(cur.x, cur.y, breakpoints, n_breakpoints) && prog_mat.mat[cur.y][cur.x] != '@');
     }
     else if (strcmp(command, "restart") == 0) {
       restore(0, &prog_mat, &cur, &prog_stack, saved_steps);
       index = 0;
     }
     else if (strcmp(command, "quit") == 0) {
-      printf("Exiting...");
+      printf("Exiting...\n");
       exit(0);
     }
     else if (strcmp(command, "prec") == 0) {
       if (nbr_args == 2 && a >= 0) {
         for (int i = 0; i < a; i++) {
+          prev(&index, &prog_mat, &cur, &prog_stack, saved_steps);
           // Checking if the cursor is currently on a breakpoint
           if (check_breakpoint(cur.x, cur.y, breakpoints, n_breakpoints))
             break;
-          prev(&index, &prog_mat, &cur, &prog_stack, saved_steps);
         }
       } else {
         prev(&index, &prog_mat, &cur, &prog_stack, saved_steps);
