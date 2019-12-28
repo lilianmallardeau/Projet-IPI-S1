@@ -1,6 +1,7 @@
 #define HISTORY_BUFFER_SIZE       500
 #define BREAKPOINTS_BUFFER_SIZE   100
 #define ENABLE_CLEAR_SCREEN       1
+#define CLEAR_SCREEN_AT_BEGINNING 0
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,6 +42,9 @@ void debugger(matrix prog_mat) {
   int nbr_args;
   int a, b;
 
+  #if CLEAR_SCREEN_AT_BEGINNING == 1
+  clear_screen();
+  #endif
   print_screen(prog_mat, cur, prog_stack);
   /* The loop ends because the debugger function is supposed to receive a
    * valid p2d program, so it should ends with an @.
