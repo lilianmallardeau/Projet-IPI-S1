@@ -4,18 +4,18 @@
 /* Defining the type of the stack's elements */
 typedef int stack_elem;
 
+/* A stack is defined as a pointer to an item */
+typedef struct item item;
+typedef item* stack;
+
 /* An item in the stack is defined as a struct containing the value of the current item (head)
  *  and a pointer to the next item in the stack (tail)
  * An item is considered to be the last of the stack if its tail is the null pointer.
  */
-typedef struct item item;
 struct item {
   stack_elem head;
   stack tail;
 };
-
-/* A stack is defined as a pointer to an item */
-typedef item* stack;
 
 
 /* @requires: nothing
