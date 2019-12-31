@@ -1,0 +1,132 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{color}
+\usepackage{listings}
+\lstset{
+  language=C,                % choose the language of the code
+  basicstyle=\tt,
+  numbers=none,                   % where to put the line-numbers
+  stepnumber=1,                   % the step between two line-numbers.        
+  keywordstyle=\color{blue}, %\textbf,
+  numbersep=5pt,                  % how far the line-numbers are from the code
+  backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+  showspaces=false,               % show spaces adding particular underscores
+  showstringspaces=false,         % underline spaces within strings
+  showtabs=false,                 % show tabs within strings adding particular underscores
+  tabsize=2,                      % sets default tabsize to 2 spaces
+  captionpos=b,                   % sets the caption-position to bottom
+  breaklines=true,                % sets automatic line breaking
+  breakatwhitespace=true,         % sets if automatic breaks should only happen at whitespace
+  title=\lstname,                 % show the filename of files included with \lstinputlisting;
+}
+
+\usepackage{hyperref}
+
+\newcommand{\code}[1]{{\textit{\lstinline{#1}}}}
+
+\title{Rapport de projet\\Programmation impérative}
+\author{Lilian MALLARDEAU}
+\date{Semestre 1}
+
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\break
+
+\section*{Sujet et choix de développement}
+\addcontentsline{toc}{section}{Sujet et choix de développement}
+
+Le sujet du projet consistait à écrire un interpréteur et un débogueur pour un langage de programmation appelé p2d.
+
+Un programme dans ce langage est défini par une grille de caractères de largeur et de longueur donnée, chaque caractère représentant une action.
+Un curseur se déplace sur cette grille en fonction des instructions données par le caractère sous le curseur, dans une des huit directions possibles.
+
+En fonction des instructions données par chaque caractère, le programme interagit avec une pile d'entiers (par exemple, dépile deux entiers et empile leur somme, ou duplique le dernier entier de la pile).
+\\
+
+Afin de pouvoir les réutiliser pour d'autres projets plus tard, et également par soucis de clareté du code, j'ai choisi de développer des modules pour les piles, les matrices et les curseurs.
+
+
+\section*{Modules développés}
+\addcontentsline{toc}{section}{Modules développés}
+Afin de maximiser la portabilité de mes modules, j'ai préféré non pas créer un module de pile d'entiers, ou encore de matrice de caractères, mais j'ai défini dans chaque interface de module un type \code{stack\_elem} ou \code{matrix\_elem}, qui permet de changer le type des éléments si nécessaire.
+
+\begin{lstlisting}
+    typedef int stack_elem;
+    typedef char matrix_elem;
+\end{lstlisting}
+
+\subsection*{Pile}
+\addcontentsline{toc}{subsection}{Pile}
+Une pile est implémentée comme une liste chainée. Un élément de la pile est donc défini comme une structure, contenant la valeur de l'élément en question, et un pointeur vers l'élément suivant.
+
+La pile elle-même est quant à elle définie comme étant un pointeur vers un maillon, premier élément de la pile.
+
+\begin{lstlisting}
+    typedef struct item item;
+    typedef item* stack;
+    struct item {
+        stack_elem head;
+        stack tail;
+    };
+\end{lstlisting}
+
+J'ai également défini quelques fonctions et procédures sur ces piles, notamment \code{push}, \code{pop}, \code{create\_stack}, et \code{is\_stack\_empty}, afin de faciliter leur utilisation dans le projet.
+
+\subsection*{Matrice}
+\addcontentsline{toc}{subsection}{Matrice}
+Une matrice est définie comme une structure, contenant deux entiers $m$ et $n$ représentants la taille de la matrice, et un tableau en 2 dimensions de taille $m \times n$ (qui sera alloué à l'aide de malloc dans la fonction de création de matrice).
+
+\begin{lstlisting}
+    typedef struct matrix matrix;
+    struct matrix {
+      int m, n;
+      matrix_elem** mat;
+    };
+\end{lstlisting}
+
+De même que pour les piles, certaines fonctions ont été implémentées afin de faciliter l'utilisation du module, notamment \code{create\_matrix(int n, int m)}, \code{copy\_matrix(matrix)} et \code{print\_matrix(matrix)}.
+
+\subsection*{Curseur}
+\addcontentsline{toc}{subsection}{Curseur}
+Le curseur est modélisé par une structure qui contient deux entier $x$ et $y$ et une direction dir.
+\begin{lstlisting}
+    typedef struct cursor cursor;
+    struct cursor {
+      int x, y;
+      enum direction dir;
+    };
+\end{lstlisting}
+
+La direction est définie en tant qu'énumération, ce qui permet facilement de tourner de 45° à gauche ou à droite en enlevant respectivement $1$ ou $-1$ à la valeur actuelle (modulo 8).
+\begin{lstlisting}
+    typedef enum direction direction;
+    enum direction {up = 0, up_right, right, down_right, down, down_left, left, up_left};
+\end{lstlisting}
+
+La fonction \code{move\_forward} permet d'avancer dans la direction courante de $n$ cases, en prennant en considération la taille de la matrice pour ne pas dépasser.
+
+J'ai également défini les procédures \code{rotate\_cw}, \code{rotate\_ccw} et \code{set\_random\_dir}, qui permettent respectivement de tourner à droite ou à gauche de 45°, et de chosir une direction au hasard.
+
+
+\section*{Interpréteur}
+\addcontentsline{toc}{section}{Interpréteur}
+
+
+
+\section*{Débogueur}
+\addcontentsline{toc}{section}{Débogueur}
+
+
+\section*{Limites du programme}
+\addcontentsline{toc}{section}{Limites du programme}
+
+
+\end{document}
