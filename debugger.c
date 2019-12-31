@@ -1,7 +1,7 @@
-#define HISTORY_BUFFER_SIZE       500
-#define BREAKPOINTS_BUFFER_SIZE   100
-#define ENABLE_CLEAR_SCREEN       1
-#define CLEAR_SCREEN_AT_BEGINNING 0
+#define HISTORY_BUFFER_SIZE       500  /* If the history buffer is not large enough, it will be reallocated */
+#define BREAKPOINTS_BUFFER_SIZE   100  /* If the breakpoints buffer is not large enough, it will be reallocated */
+#define ENABLE_CLEAR_SCREEN       1    /* Clears screen between each iteration */
+#define CLEAR_SCREEN_AT_BEGINNING 1    /* Only works if ENABLE_CLEAR_SCREEN == 1 */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,12 +28,13 @@ void debugger(matrix prog_mat) {
   cur.dir = right;
 
   size_t n_breakpoints = 0;
-  breakpoint breakpoints[BREAKPOINTS_BUFFER_SIZE];
+  size_t breakpoints_buffer_size = BREAKPOINTS_BUFFER_SIZE;
+  breakpoint* breakpoints = (breakpoint*) calloc(BREAKPOINTS_BUFFER_SIZE, sizeof(breakpoint));
 
-  size_t current_history_buffer_size = HISTORY_BUFFER_SIZE;
+  size_t history_buffer_size = HISTORY_BUFFER_SIZE;
   prog_step* saved_steps = (prog_step*) calloc(HISTORY_BUFFER_SIZE, sizeof(prog_step));
   // Saving the first step of the program, before execution
-  save_step(0, prog_mat, cur, prog_stack, saved_steps, &current_history_buffer_size);
+  save_step(0, prog_mat, cur, prog_stack, &saved_steps, &history_buffer_size);
   int index = 1;
 
   char userinput[256];
@@ -46,6 +47,7 @@ void debugger(matrix prog_mat) {
   clear_screen();
   #endif
   print_screen(prog_mat, cur, prog_stack);
+
   /* The loop ends because the debugger function is supposed to receive a
    * valid p2d program, so it should ends with an @.
    */
@@ -62,18 +64,18 @@ void debugger(matrix prog_mat) {
     if (strcmp(command, "step") == 0) {
       if (nbr_args == 2 && a >= 0) {
         for (int i = 0; i < a; i++) {
-          next(&index, &prog_mat, &cur, &prog_stack, saved_steps, &current_history_buffer_size);
+          next(&index, &prog_mat, &cur, &prog_stack, &saved_steps, &history_buffer_size);
           // Checking if the cursor is currently on a breakpoint
           if (check_breakpoint(cur.x, cur.y, breakpoints, n_breakpoints))
             break;
         }
       } else {
-        next(&index, &prog_mat, &cur, &prog_stack, saved_steps, &current_history_buffer_size);
+        next(&index, &prog_mat, &cur, &prog_stack, &saved_steps, &history_buffer_size);
       }
     }
     else if (strcmp(command, "run") == 0) {
       do {
-        next(&index, &prog_mat, &cur, &prog_stack, saved_steps, &current_history_buffer_size);
+        next(&index, &prog_mat, &cur, &prog_stack, &saved_steps, &history_buffer_size);
       } while (!check_breakpoint(cur.x, cur.y, breakpoints, n_breakpoints) && prog_mat.mat[cur.y][cur.x] != '@');
     }
     else if (strcmp(command, "restart") == 0) {
@@ -98,7 +100,7 @@ void debugger(matrix prog_mat) {
     }
     else if (strcmp(command, "breakpoint") == 0) {
       if (nbr_args == 3) {
-        add_breakpoint(a, b, breakpoints, &n_breakpoints);
+        add_breakpoint(a, b, &breakpoints, &n_breakpoints, &breakpoints_buffer_size);
       }
     }
     else if (strcmp(command, "removebp") == 0) {
@@ -120,14 +122,25 @@ void debugger(matrix prog_mat) {
 /* ---------------------------- Breakpoints functions ---------------------------- */
 /* ------------------------------------------------------------------------------- */
 
-int add_breakpoint(int x, int y, breakpoint breakpoints[], size_t* len) {
-  if (!check_breakpoint(x, y, breakpoints, *len)) {
+int add_breakpoint(int x, int y, breakpoint* breakpoints[], size_t* n_breakpoints, size_t* buffer_size) {
+  if (!check_breakpoint(x, y, *breakpoints, *n_breakpoints)) {
     breakpoint new_breakpoint;
     new_breakpoint.x = x;
     new_breakpoint.y = y;
-    // Here: reallocate if needed
-    breakpoints[*len] = new_breakpoint;
-    (*len)++;
+    
+    // If needed, reallocate the memory for the array
+    if (*buffer_size <= *n_breakpoints) {
+      *breakpoints = realloc(*breakpoints, (*buffer_size + BREAKPOINTS_BUFFER_SIZE) * sizeof(struct breakpoint));
+      if (*breakpoints != NULL) {
+        *buffer_size += BREAKPOINTS_BUFFER_SIZE;
+      } else {
+        fprintf(stderr, "Error while reallocating breakpoints array. Exiting.");
+        exit(2);
+      }
+    }
+    
+    (*breakpoints)[*n_breakpoints] = new_breakpoint;
+    (*n_breakpoints)++;
     return 1;
   } else {
     return 0;
@@ -163,10 +176,10 @@ int check_breakpoint(int x, int y, breakpoint breakpoints[], size_t len) {
 
 /* @requieres: prog is a matrix of a valid p2d program, cur is a valid cursor,
  *    prog_stack is a valid stack, , 0 <= index
- * @assigns: Reallocate saved_steps array if needed.
+ * @assigns: Reallocate *saved_steps array if needed.
  * @ensures:
  */
-void save_step(int index, matrix mat, cursor cur, stack prog_stack, prog_step saved_steps[], size_t* size) {
+void save_step(int index, matrix mat, cursor cur, stack prog_stack, prog_step* saved_steps[], size_t* size) {
   prog_step new_step;
   new_step.mat = copy_matrix(mat);
   new_step.cur = cur;
@@ -174,8 +187,8 @@ void save_step(int index, matrix mat, cursor cur, stack prog_stack, prog_step sa
 
   // If needed, reallocate the memory for the array
   if (*size <= index) {
-    saved_steps = realloc(saved_steps, (*size + HISTORY_BUFFER_SIZE) * sizeof(struct prog_step));
-    if (saved_steps != NULL) {
+    *saved_steps = realloc(*saved_steps, (*size + HISTORY_BUFFER_SIZE) * sizeof(struct prog_step));
+    if (*saved_steps != NULL) {
       *size += HISTORY_BUFFER_SIZE;
     } else {
       fprintf(stderr, "Error while reallocating program history array. Exiting.");
@@ -183,7 +196,7 @@ void save_step(int index, matrix mat, cursor cur, stack prog_stack, prog_step sa
     }
   }
 
-  saved_steps[index] = new_step;
+  (*saved_steps)[index] = new_step;
 }
 
 /* @requieres:
@@ -200,7 +213,7 @@ void restore(int index, matrix* mat, cursor* cur, stack* prog_stack, prog_step s
  * @assigns:
  * @ensures:
  */
-void next(int* index, matrix* prog_mat, cursor* cur, stack* prog_stack, prog_step saved_steps[], size_t* size) {
+void next(int* index, matrix* prog_mat, cursor* cur, stack* prog_stack, prog_step* saved_steps[], size_t* size) {
   one_step(prog_mat, cur, prog_stack);
   save_step(*index, *prog_mat, *cur, *prog_stack, saved_steps, size);
   (*index)++;

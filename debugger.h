@@ -25,15 +25,15 @@ struct breakpoint {
 void debugger(matrix prog_mat);
 
 /* ---------------------------- Breakpoints functions ---------------------------- */
-int add_breakpoint(int x, int y, breakpoint breakpoints[], size_t* len);
+int add_breakpoint(int x, int y, breakpoint* breakpoints[], size_t* n_breakpoints, size_t* buffer_size);
 void remove_breakpoint(int x, int y, breakpoint breakpoints[], size_t* len);
 int get_breakpoint(int x, int y, breakpoint breakpoints[], size_t len);
 int check_breakpoint(int x, int y, breakpoint breakpoints[], size_t len);
 
 /* ------------------------------ History functions ------------------------------ */
-void save_step(int index, matrix mat, cursor cur, stack prog_stack, prog_step saved_steps[], size_t* size);
+void save_step(int index, matrix mat, cursor cur, stack prog_stack, prog_step* saved_steps[], size_t* size);
 void restore(int index, matrix* mat, cursor* cur, stack* prog_stack, prog_step saved_steps[]);
-void next(int* index, matrix* prog_mat, cursor* cur, stack* prog_stack, prog_step saved_steps[], size_t* size);
+void next(int* index, matrix* prog_mat, cursor* cur, stack* prog_stack, prog_step* saved_steps[], size_t* size);
 void prev(int* index, matrix* prog_mat, cursor* cur, stack* prog_stack, prog_step saved_steps[]);
 
 /* ------------------------------ Screens functions ------------------------------ */
