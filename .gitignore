@@ -1,5 +1,8 @@
 p2d
 *.o
 
+Compte_rendu/*
+!Compte_rendu/Compte_rendu.tex
+
 test.c
 test
