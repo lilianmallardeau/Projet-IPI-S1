@@ -14,7 +14,7 @@
 void interpreter(matrix prog);
 
 
-/* Execute the next step of the p2d program
+/* Executes the next step of the p2d program
  *
  * @requires: *prog est une matrice contenant un programme p2d valide
  *  0 <= cur->x <= prog.n, 0 <= cur->y <= prog.m

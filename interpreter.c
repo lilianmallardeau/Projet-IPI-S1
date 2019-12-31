@@ -28,7 +28,7 @@ void interpreter(matrix prog) {
 }
 
 
-/* Execute the next step of the p2d program
+/* Executes the next step of the p2d program
  *
  * @requires: *prog est une matrice contenant un programme p2d valide
  *  0 <= cur->x <= prog.n, 0 <= cur->y <= prog.m
@@ -199,6 +199,6 @@ void one_step(matrix* prog, cursor* cur, stack* prog_stack) {
       break;
   }
 
-  // moving cursor one step further in the current direction
+  /* moving cursor one step further in the current direction */
   move_forward(cur, 1, prog->n, prog->m);
 }

@@ -33,7 +33,7 @@ void debugger(matrix prog_mat) {
 
   size_t history_buffer_size = HISTORY_BUFFER_SIZE;
   prog_step* saved_steps = (prog_step*) calloc(HISTORY_BUFFER_SIZE, sizeof(prog_step));
-  // Saving the first step of the program, before execution
+  /* Saving the first step of the program, before execution */
   save_step(0, prog_mat, cur, prog_stack, &saved_steps, &history_buffer_size);
   int index = 1;
 
@@ -52,11 +52,11 @@ void debugger(matrix prog_mat) {
    * valid p2d program, so it should ends with an @.
    */
   while (prog_mat.mat[cur.y][cur.x] != '@') {
-    // Getting user user input
+    /* Getting user user input */
     fgets(userinput, 256, stdin);
     nbr_args = sscanf(userinput, "%s %d %d", command, &a, &b);
     if (nbr_args == -1) {
-      // If the input is empty, set the command to the last one
+      /* If the input is empty, set the command to the last one */
       nbr_args = sscanf(last_command, "%s %d %d", command, &a, &b);
       strcpy(userinput, last_command);
     }
@@ -65,7 +65,7 @@ void debugger(matrix prog_mat) {
       if (nbr_args == 2 && a >= 0) {
         for (int i = 0; i < a; i++) {
           next(&index, &prog_mat, &cur, &prog_stack, &saved_steps, &history_buffer_size);
-          // Checking if the cursor is currently on a breakpoint
+          /* Checking if the cursor is currently on a breakpoint */
           if (check_breakpoint(cur.x, cur.y, breakpoints, n_breakpoints))
             break;
         }
@@ -90,7 +90,7 @@ void debugger(matrix prog_mat) {
       if (nbr_args == 2 && a >= 0) {
         for (int i = 0; i < a; i++) {
           prev(&index, &prog_mat, &cur, &prog_stack, saved_steps);
-          // Checking if the cursor is currently on a breakpoint
+          /* Checking if the cursor is currently on a breakpoint */
           if (check_breakpoint(cur.x, cur.y, breakpoints, n_breakpoints))
             break;
         }
@@ -109,10 +109,10 @@ void debugger(matrix prog_mat) {
       }
     }
 
-    // Saving the last user command
+    /* Saving the last user command */
     strcpy(last_command, userinput);
 
-    // Clearing screen and printing the new program state
+    /* Clearing screen and printing the new program state */
     clear_screen();
     print_screen(prog_mat, cur, prog_stack);
   }
@@ -132,7 +132,7 @@ int add_breakpoint(int x, int y, breakpoint* breakpoints[], size_t* n_breakpoint
     new_breakpoint.x = x;
     new_breakpoint.y = y;
     
-    // If needed, reallocate the memory for the array
+    /* If needed, reallocate the memory for the array */
     if (*buffer_size <= *n_breakpoints) {
       *breakpoints = realloc(*breakpoints, (*buffer_size + BREAKPOINTS_BUFFER_SIZE) * sizeof(struct breakpoint));
       if (*breakpoints != NULL) {
@@ -205,7 +205,7 @@ void save_step(int index, matrix mat, cursor cur, stack prog_stack, prog_step* s
   new_step.cur = cur;
   new_step.stack = copy_stack(prog_stack);
 
-  // If needed, reallocate the memory for the array
+  /* If needed, reallocate the memory for the array */
   if (*size <= index) {
     *saved_steps = realloc(*saved_steps, (*size + HISTORY_BUFFER_SIZE) * sizeof(struct prog_step));
     if (*saved_steps != NULL) {
@@ -262,7 +262,7 @@ void prev(int* index, matrix* prog_mat, cursor* cur, stack* prog_stack, prog_ste
 void clear_screen() {
   #if ENABLE_CLEAR_SCREEN == 1
   system("@cls||clear");
-  // OUI c'est crade je sais mais ça fonctionne
+  /* OUI c'est crade je sais mais ça fonctionne */
   #endif
 }
 
@@ -275,7 +275,7 @@ void clear_screen() {
 void print_screen(matrix prog, cursor cur, stack prog_stack) {
   printf("\n");
 
-  // Printing header and character indicator
+  /* Printing header and character indicator */
   for (int i = 0; i < prog.n + 5; i+=5) {
     printf("%5d", i);
   }
@@ -288,7 +288,7 @@ void print_screen(matrix prog, cursor cur, stack prog_stack) {
   }
   printf("\n");
 
-  // Printing program matrix
+  /* Printing program matrix */
   for (int i = 0; i < prog.m; i++) {
     if (i%5 == 0)
       printf("%3d%s", i, cur.y == i ? BOLDRED ">" RESET : "-");
@@ -301,14 +301,14 @@ void print_screen(matrix prog, cursor cur, stack prog_stack) {
   }
   printf("\n");
 
-  // Printing program stack
+  /* Printing program stack */
   while (!is_stack_empty(prog_stack)) {
     printf(" %d (%c) |", prog_stack->head, (char) (prog_stack->head % 255));
     prog_stack = prog_stack->tail;
   }
   printf("\n");
 
-  // Printing cursor coordinates
+  /* Printing cursor coordinates */
   printf("x: %d, y: %d", cur.x, cur.y);
-  printf("\n");  // And a newline, because it's beautiful
+  printf("\n");  /* And a newline, because it's beautiful */
 }
