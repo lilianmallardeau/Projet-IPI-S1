@@ -134,7 +134,7 @@ int add_breakpoint(int x, int y, breakpoint* breakpoints[], size_t* n_breakpoint
     
     /* If needed, reallocate the memory for the array */
     /* The while loop ends because either the realloc fails and the program ends,
-   *    either it succeeds each time, until the array is large enough */
+     *    either it succeeds each time, until the array is large enough */
     while (*buffer_size <= *n_breakpoints) {
       *breakpoints = realloc(*breakpoints, (*buffer_size + BREAKPOINTS_BUFFER_SIZE) * sizeof(struct breakpoint));
       if (*breakpoints != NULL) {
