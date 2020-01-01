@@ -133,6 +133,8 @@ int add_breakpoint(int x, int y, breakpoint* breakpoints[], size_t* n_breakpoint
     new_breakpoint.y = y;
     
     /* If needed, reallocate the memory for the array */
+    /* The while loop ends because either the realloc fails and the program ends,
+   *    either it succeeds each time, until the array is large enough */
     while (*buffer_size <= *n_breakpoints) {
       *breakpoints = realloc(*breakpoints, (*buffer_size + BREAKPOINTS_BUFFER_SIZE) * sizeof(struct breakpoint));
       if (*breakpoints != NULL) {
@@ -206,6 +208,8 @@ void save_step(int index, matrix mat, cursor cur, stack prog_stack, prog_step* s
   new_step.stack = copy_stack(prog_stack);
 
   /* If needed, reallocate the memory for the array */
+  /* The while loop ends because either the realloc fails and the program ends,
+   *    either it succeeds each time, until the array is large enough */
   while (*size <= index) {
     *saved_steps = realloc(*saved_steps, (*size + HISTORY_BUFFER_SIZE) * sizeof(struct prog_step));
     if (*saved_steps != NULL) {
