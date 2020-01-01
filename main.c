@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #include "matrix.h"
 #include "interpreter.h"
 #include "debugger.h"
@@ -23,6 +24,10 @@ int main(int argc, char const *argv[]) {
   int debug_mode = getenv("P2D_DEBUG_MODE") != NULL || FORCE_DEBUG;
 
   FILE* file = fopen(argv[1], "r");
+  if (file == NULL) {
+    perror("fopen");
+    exit(1);
+  }
   char* firstline = NULL;
   size_t firstline_size = 0;
   getline(&firstline, &firstline_size, file);
