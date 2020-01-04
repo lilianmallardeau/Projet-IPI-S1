@@ -1,7 +1,6 @@
 #define HISTORY_BUFFER_SIZE       500  /* If the history buffer is not large enough, it will be reallocated */
 #define BREAKPOINTS_BUFFER_SIZE   100  /* If the breakpoints buffer is not large enough, it will be reallocated */
 #define ENABLE_CLEAR_SCREEN       1    /* Clears screen between each iteration */
-#define CLEAR_SCREEN_AT_BEGINNING 1    /* Only works if ENABLE_CLEAR_SCREEN == 1 */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,15 +42,16 @@ void debugger(matrix prog_mat) {
   int nbr_args;
   int a, b;
 
-  #if CLEAR_SCREEN_AT_BEGINNING == 1
-  clear_screen();
-  #endif
-  print_screen(prog_mat, cur, prog_stack);
-
   /* The loop ends because the debugger function is supposed to receive a
    * valid p2d program, so it should ends with an @.
    */
   while (prog_mat.mat[cur.y][cur.x] != '@') {
+    /* Clearing screen and printing the new program state */
+    #if ENABLE_CLEAR_SCREEN == 1
+    clear_screen();
+    #endif
+    print_screen(prog_mat, cur, prog_stack);
+
     /* Getting user user input */
     fgets(userinput, 256, stdin);
     nbr_args = sscanf(userinput, "%s %d %d", command, &a, &b);
@@ -111,10 +111,6 @@ void debugger(matrix prog_mat) {
 
     /* Saving the last user command */
     strcpy(last_command, userinput);
-
-    /* Clearing screen and printing the new program state */
-    clear_screen();
-    print_screen(prog_mat, cur, prog_stack);
   }
 }
 
@@ -264,10 +260,8 @@ void prev(int* index, matrix* prog_mat, cursor* cur, stack* prog_stack, prog_ste
  * @ensures: Clears the console. Works on Linux (bash/zsh), Windows (cmd.exe) and macOS (zsh)
  */
 void clear_screen() {
-  #if ENABLE_CLEAR_SCREEN == 1
   system("@cls||clear");
   /* OUI c'est crade je sais mais ça fonctionne */
-  #endif
 }
 
 
