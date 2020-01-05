@@ -1,4 +1,4 @@
-CC = gcc -Wall -Wextra -g
+CC = gcc -Wall
 BINS = p2d *.o
 
 all: p2d
