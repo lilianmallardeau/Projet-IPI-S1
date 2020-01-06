@@ -12,6 +12,8 @@
 \definecolor{commentscolor}{HTML}{777777}
 \lstset{
   language=C,                % choose the language of the code
+  %aboveskip=3mm,
+  belowskip=0mm,
   basicstyle={\tt},
   numbers=none,                   % where to put the line-numbers
   stepnumber=1,                   % the step between two line-numbers.        
@@ -44,6 +46,13 @@
 \maketitle
 \tableofcontents
 \break
+
+\section*{Repository GitLab}
+Vous pouvez retrouvez si vous le souhaitez mon projet sur le GitLab d'ARISE :
+
+\url{https://git.iiens.net/mallarde2019/projet-ipi-s1}
+
+\newpage
 
 \section*{Sujet et choix de développement}
 \addcontentsline{toc}{section}{Sujet et choix de développement}
@@ -111,7 +120,7 @@ Le curseur est modélisé par une structure qui contient deux entier $x$ et $y$ 
     };
 \end{lstlisting}
 
-La direction est définie en tant qu'énumération, ce qui permet facilement de tourner de 45° à gauche ou à droite en enlevant respectivement $1$ ou $-1$ à la valeur actuelle (modulo 8).
+La direction est définie en tant qu'énumération, ce qui permet facilement de tourner de 45° à gauche ou à droite en enlevant respectivement $1$ ou $-1$ à la valeur actuelle, et en appliquant un modulo 8 au résultat.
 \begin{lstlisting}
     typedef enum direction direction;
     enum direction {up = 0, up_right, right, down_right, down, down_left, left, up_left};
@@ -127,7 +136,7 @@ J'ai également défini les procédures \code{rotate_cw}, \code{rotate_ccw} et \
 \addcontentsline{toc}{section}{Architecture du programme}
 
 En s'appuyant sur ces modules, le programme (que ce soit l'interpréteur ou le débogueur) doit d'abord ouvrir le fichier .p2d, récuperer la taille $n \times m$ du programme, créer une matrice de taille $n \times m$ et la remplir avec les caractères lus.
-J'ai donc décidé de construire un fichier \code{main.c}, qui, une fois compilé en exécutable \code{p2d}, reçoit en argument le programme à executer, lit les dimensions, crée la matrice et la remplit avec les caractères du programme p2d, puis lance le débogueur si la variable d'environnement \code{P2D_DEBUG_MODE} est définie, sinon l'interpréteur.
+J'ai donc décidé de construire un fichier \code{main.c}, qui, une fois compilé en exécutable \code{p2d}, reçoit en argument le programme à exécuter, lit les dimensions, crée la matrice et la remplit avec les caractères du programme p2d, puis lance le débogueur si la variable d'environnement \code{P2D_DEBUG_MODE} est définie, sinon l'interpréteur.
 
 Les fonctions nécessaires à l'interpréteur et au débogueur sont donc réparties respectivement dans les fichiers \code{interpreter.c} et \code{debugger.c}, qui sont linkés avec l'exécutable \code{p2d} lors de la compilation avec \code{make}.
 
@@ -145,7 +154,7 @@ Afin de pouvoir lancer le débogueur facilement, j'ai écrit un wrapper \code{de
 \subsection*{Ouverture du fichier et récupération des dimensions}
 \addcontentsline{toc}{subsection}{Ouverture du fichier et récupération des dimensions}
 
-J'ai utilisé un flux libc pour l'ouverture et la lecture du fichier p2d. La première ligne est lue grâce à la fonction \code{getline} (qui permet d'obtenir un pointeur vers la chaine de caractères correspondante), et ensuite on utilise \code{sscanf} pour récupérer les dimensions \code{m} et \code{n} en \code{int}.
+J'ai utilisé un flux libc pour l'ouverture et la lecture du fichier p2d. La première ligne est lue grâce à la fonction \code{getline} (qui permet d'obtenir un pointeur vers la chaine de caractères correspondante), et on utilise ensuite \code{sscanf} pour récupérer les dimensions $m$ et $n$ en \code{int}.
 
 Il a ensuite suffit de créer une matrice aux dimensions $m \times n$, puis de la remplir caractère par caractère à l'aide de 2 boucles \code{for} imbriquées et de la fonction \code{getc}, qui lit un caractère et avance le curseur.
 
@@ -183,7 +192,7 @@ Il m'a alors seulement suffit d'inverser \code{cur.x} et \code{cur.y} dans tout 
 
 J'ai également rencontré un problème avec les commandes liées aux caractères 'p' et 'g', cependant je ne m'en suis rendu compte que tard, lors du test avec \code{sieve.p2d}. En effet, tous les programmes fournis en exemple fonctionnaint, sauf celui-là qui imprimait une grille infinie de 0. Effectivement, ce programme est le seul à contenir des caractères 'p' et 'g'. J'ai pensé qu'il serait plus pratique de d'abord développer totalement le débogueur, afin de m'en servir pour corriger cette erreur.
 
-J'ai donc remarqué après développement de ce dernier que lors des commandes 'p' ou 'g'
+J'ai donc remarqué après développement de ce dernier que lors des commandes 'p' ou 'g', les coordonnées $x$ et $y$ du caractère ciblé sont inversées : après inversion de l'ordre de dépilement de $x$ et $y$ dans la pile, le problème était corrigé.
 
 
 
@@ -193,12 +202,13 @@ J'ai donc remarqué après développement de ce dernier que lors des commandes '
 
 Le sujet nous demandait, après avoir réalisé l'interpréteur, de développer un débogueur pour programmes \code{.p2d}. Le débogueur demanda plus de réflexion et de conception en amont du développement que l'interpréteur. Celui-ci devait d'abord afficher la matrice du programme courant, entourées de repères et d'indicateurs permettant d'afficher la position actuelle du curseur, puis l'état de la pile (ainsi que, pour chaque entier, le caractère correspondant à son code ASCII entre parenthèses) et enfin les coordonnées du curseur.
 
+\newpage
 Le débogueur attend ensuite des commandes de l'utilisateur, parmis :
 \renewcommand{\labelitemi}{\textbullet}
 \begin{itemize}
     \item \textbf{step} : avance d'une étape dans le programme
     \item \textbf{step n} : avance de $n$ étapes dans le programme, ou jusqu'au prochain breakpoint
-    \item \textbf{run} : execute le programme jusqu'à la fin, c'est-à-dire jusqu'à renconter le caractère '@' (ou jusqu'à renconter un breakpoint)
+    \item \textbf{run} : exécute le programme jusqu'à la fin, c'est-à-dire jusqu'à renconter le caractère '@' (ou jusqu'à renconter un breakpoint)
     \item \textbf{restart} : retourne à l'état initial, avant exécution
     \item \textbf{quit} : quitte le débogueur
     \item \textbf{prec} : recule d'une étape
@@ -228,12 +238,15 @@ Ainsi, un historique complet des étapes du programme est incrémenté dans un t
 {\small\begin{lstlisting}
     prog_step* saved_steps = (prog_step*) calloc(HISTORY_BUFFER_SIZE, sizeof(prog_step));
 \end{lstlisting}}
+La constante \code{HISTORY_BUFFER_SIZE} est définie en début de fichier à l'aide d'un \code{#define} : il s'agit de la taille originale du tableau lors de sa création.
+
+\bigskip
 
 Pour facilier l'enregistrement d'une étape, j'ai défini la fonction \code{save_step} suivante :
 {\small\begin{lstlisting}
     void save_step(int index, matrix mat, cursor cur, stack prog_stack, prog_step* saved_steps[], size_t* size);
 \end{lstlisting}}
-À l'aide des fonctions \code{copy_matrix} et \code{copy_stack} des modules \code{matrix} et \code{stack}, la fonction \code{save_step} crée un nouvel élement \code{prog_step}, stocke une copie de la matrice, du curseur et de la pile actuels, et ajoute cet élément au tableau \code{saved_steps} en position \code{index}. Si la taille du tableau \code{*size} est trop petite pour un élément supplémentaire, \code{save_step} agrandit le tableau \code{saved_steps} de \code{HISTORY_BUFFER_SIZE} cases supplémentaires, en lui réallouant la mémoire nécessaire à l'aide de \code{realloc} :
+À l'aide des fonctions \code{copy_matrix} et \code{copy_stack} des modules \code{matrix} et \code{stack}, la fonction \code{save_step} crée un nouvel élement \code{prog_step}, stocke une copie de la matrice, du curseur et de la pile actuels, et ajoute cet élément au tableau \code{saved_steps} en position \code{index}. Si la taille du tableau \code{*size} est inférieure à \code{index}, \code{save_step} agrandit le tableau \code{saved_steps} de \code{HISTORY_BUFFER_SIZE} cases supplémentaires, en lui réallouant la mémoire nécessaire à l'aide de \code{realloc} :
 
 {\small\begin{lstlisting}
     while (*size <= index) {
@@ -263,13 +276,15 @@ De même que pour l'historique, j'ai déclaré au début du débogueur un tablea
 {\small\begin{lstlisting}
     breakpoint* breakpoints = (breakpoint*) calloc(BREAKPOINTS_BUFFER_SIZE, sizeof(breakpoint));
 \end{lstlisting}}
-destiné à stocker les breakpoints définis par l'utilisateur.
+destiné à stocker les breakpoints définis par l'utilisateur. La taille initiale \code{BREAKPOINTS_BUFFER_SIZE} est définie en tant que constante en début de fichier avec un \code{#define}.
+
+\bigskip
 
 La fonction
 {\small\begin{lstlisting}
 add_breakpoint(int x, int y, breakpoint* breakpoints[], size_t* n_breakpoints, size_t* buffer_size);
 \end{lstlisting}}
-permet d'ajouter le breakpoint (\code{x}, \code{y}) au tableau \code{breakpoints} s'il n'y est pas déjà présent, en réallouant la mémoire disponible pour le tableau si nécessaire, de la même façon que dans la fonction \code{save_step}.
+permet d'ajouter le breakpoint $(x, y)$ au tableau \code{breakpoints} s'il n'y est pas déjà présent, en réallouant la mémoire disponible pour le tableau si nécessaire, de la même façon que dans la fonction \code{save_step}.
 
 J'ai aussi défini des fonctions \code{remove_breakpoint} et \code{get_breakpoint} permettant de rechercher ou de supprimer des breakpoints.
 
@@ -293,12 +308,11 @@ Pour nettoyer l'écran entre chaque itération avant d'appeler la fonction \code
         system("@cls||clear");
     }
 \end{lstlisting}
-Bien qu'effectivement très peu propre, cette astuce fonctionne sur Windows, Linux et macOS :
-Sur Windows, la commande \code{cls} est exécutée, avec le \code{'@'} en début de commande qui permet de ne pas afficher la commande avant de l'exécuter.
-Sur Linux et macOS, la commande \code{cls} n'existe pas, l'expression \code{@cls} renvoit alors une erreur, et la commande \code{clear} est executée grace au OU logique \code{||}.
+Bien qu'effectivement très peu propre, cette astuce fonctionne sur Windows, Linux et macOS : sur Windows, la commande \code{cls} est exécutée, avec le \code{'@'} en début de commande qui permet de ne pas afficher la commande avant de l'exécuter.
+Sur Linux et macOS, la commande \code{@cls} n'existe pas, l'expression \code{@cls} renvoit alors une erreur, et la commande \code{clear} est exécutée grace au OU logique \code{||}.
 
-\subsubsection*{Récupération et exécution des commandes}
-\addcontentsline{toc}{subsubsection}{Récupération et exécution des commandes}
+\subsubsection*{Récupération de l'entrée utilisateur et de la commande}
+\addcontentsline{toc}{subsubsection}{Récupération de l'entrée utilisateur et de la commande}
 
 Après avoir défini tous les types et toutes les fonctions nécessaires, le débogueur en lui-même reçoit la matrice du programme à déboguer, doit afficher l'état initial du programme, et récupérer la commande de l'utilisateur. On doit aussi stocker la commande précedente, si l'utilisateur entre une ligne vide.
 
@@ -314,7 +328,7 @@ J'ai donc utilisé la fonction \code{sscanf}, qui s'utilise de la même façon q
 \end{lstlisting}}
 
 Ainsi, si l'utilisateur entre une commande de la forme \code{step n}, \code{nbr_args} vaudra 2, le buffer \code{command} contiendra la chaine \code{"step"}, la valeur de \code{n} sera stockée dans \code{a} et \code{b} restera inchangée.
-Sachant que lorsque \code{sscanf} n'arrive à assigner aucune variable avec succès (par exemple, lorsque l'utilisateur entre une ligne vide, ou seulement avec des espaces) sa valeur de retour vaut -1, je peux considérer l'ancienne commande à la place lorsque c'est nécessaire :
+Sachant que lorsque \code{sscanf} n'arrive à assigner aucune variable avec succès (par exemple, lorsque l'utilisateur entre une ligne vide, ou seulement des espaces) sa valeur de retour vaut -1, je peux considérer l'ancienne commande à la place lorsque c'est nécessaire :
 {\small\begin{lstlisting}
     if (nbr_args == -1) {
         nbr_args = sscanf(last_command, "%s %d %d", command, &a, &b);
@@ -323,6 +337,8 @@ Sachant que lorsque \code{sscanf} n'arrive à assigner aucune variable avec succ
 \end{lstlisting}}
 
 Je peux ensuite faire des tests avec \code{strcmp} sur la chaine \code{command} et exécuter les actions nécessaires :
+\bigskip
+
 {\small\begin{lstlisting}
     if (strcmp(command, "step") == 0) {
         if (nbr_args == 2 && a >= 0) {
@@ -338,9 +354,43 @@ Je peux ensuite faire des tests avec \code{strcmp} sur la chaine \code{command} 
         /* ... */
 \end{lstlisting}}
 
+\subsubsection*{Exécution des commandes}
+\addcontentsline{toc}{subsubsection}{Exécution des commandes}
 
-\subsubsection*{Problèmes rencontrés et solutions}
-\addcontentsline{toc}{subsubsection}{Problèmes rencontrés et solutions}
+Ayant maintenant les paramètres nécessaires aux commandes dans les variables \code{a} et \code{b}, et en ayant recours aux fonctions définies plus haut, il est plus aisé d'exécuter les actions correspondants à chaque commande.
+
+\bigskip
+
+Pour les commandes \code{step} et \code{step n}, j'ai défini une fonction \code{next}, qui prend tous les arguments nécessaires (pointeur vers la matrice, le curseur, la pile et l'index de l'étape actuelle, et le tableau \code{saved_steps} ainsi que sa taille), qui utilise la fonction \code{next_step} définie dans l'interpréteur pour avancer d'une étape, qui enregistre cette étape avec \code{save_step}, puis qui incrémente \code{index}.
+Il suffit donc d'appeler cette fonction une fois pour avancer d'une étape.
+Pour la commande \code{step n}, on appelle \code{next} $n$ fois dans une boucle \code{for}, mais il faut vérifier à chaque fois que le curseur ne se trouve pas sur un breakpoint :
+
+{\small\begin{lstlisting}
+    for (int i = 0; i < a; i++) {
+      next(&index, &prog_mat, &cur, &prog_stack, &saved_steps, &history_buffer_size);
+      if (check_breakpoint(cur.x, cur.y, breakpoints, n_breakpoints))
+        break;
+    }
+\end{lstlisting}}
+
+Pour revenir à l'étape précédente, j'ai défini, de même que la fonction \code{next}, une fonction \code{prev} qui prend les mêmes arguments que \code{next} plus un pointeur \code{index} vers l'indice de l'étape actuelle, et qui restore l'étape précédente à l'aide de la fonction \code{restore} définie plus haut, si l'index actuel est supérieur à 1 (afin d'éviter une erreur de segmentation). Dans ce cas, la fonction \code{prev} décrémente aussi la variable \code{*index}.
+
+L'exécution des commandes \code{prec} et \code{prec n} s'effecue exactement de la même façon, sauf qu'on appelle la fonction \code{prev} à la place de la fonction \code{next}.
+
+\bigskip
+
+La commande \code{run} est implémentée à l'aide d'une boucle \code{do ... while} et d'un appel à \code{next} :
+{\scriptsize\begin{lstlisting}
+    do {
+        next(&index, &prog_mat, &cur, &prog_stack, &saved_steps, &history_buffer_size);
+    } while (!check_breakpoint(cur.x, cur.y, breakpoints, n_breakpoints) && prog_mat.mat[cur.y][cur.x] != '@');
+\end{lstlisting}}
+
+Les commandes relatives aux breakpoints appellent seulement la fonction \code{add_breakpoint} ou \code{remove_breakpoint} définie plus haut, avec les paramètres nécessaires.
+
+\bigskip
+
+Quant aux commandes \code{restart} et \code{quit}, il suffit respectivement d'appeler la fonction \code{restore} avec l'index 0 et de réinitialiser la variable \code{index} à 0, ou d'utiliser \code{exit(0)}.
 
 
 % --------------- Limites -------------- %
@@ -349,10 +399,12 @@ Je peux ensuite faire des tests avec \code{strcmp} sur la chaine \code{command} 
 
 Une des limites évidentes de ce programme vient du fait que le type \code{int} ne peut gérer des entiers infiniments grands : il sera donc impossible d'exécuter un programme .p2d correctement si au moins une de ses dimensions dépasse la valeur de la constante \code{INT_MAX} (dépend des implémentations, souvent $2 147 483 647$).
 
-De même, le débogueur enregistrant chaque étape du programme dans un tableau, et incrémentant l'indice correspondant à l'étape actuelle, l'historique sera progessivement effacé pour enregistrer les étapes suivants si un programme a plus de \code{INT_MAX} étapes.
+De même, le débogueur enregistrant chaque étape du programme dans un tableau, et incrémentant l'indice correspondant à l'étape actuelle, l'historique sera progessivement effacé pour enregistrer les étapes suivantes si un programme a plus de \code{INT_MAX} étapes.
 
 Bien que ce soit peu probable, il n'est pas non plus possible d'ajouter plus de \code{INT_MAX} breakpoints différents, le \code{INT_MAX+1}\up{ième} écrasant le premier.
 
-Ensuite, les buffers destinés à recevoir les commandes utilisateur ayant été définis avec une taille donnée (256 caractères), le débogueur ne peut gérer une entrée utilisateur de plus de 256 caractères (bien que ce soit peu probable).
+\bigskip
+
+Enfin, les buffers destinés à recevoir les commandes utilisateur ayant été définis avec une taille donnée (256 caractères), le débogueur ne peut gérer une entrée utilisateur de plus de 256 caractères (bien que ce soit peu probable).
 
 \end{document}
