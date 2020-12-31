@@ -190,7 +190,7 @@ Il m'a alors seulement suffit d'inverser \code{cur.x} et \code{cur.y} dans tout 
 
 {\small\textbf{Problème avec les commandes 'p' et 'g'}}
 
-J'ai également rencontré un problème avec les commandes liées aux caractères 'p' et 'g', cependant je ne m'en suis rendu compte que tard, lors du test avec \code{sieve.p2d}. En effet, tous les programmes fournis en exemple fonctionnaint, sauf celui-là qui imprimait une grille infinie de 0. Effectivement, ce programme est le seul à contenir des caractères 'p' et 'g'. J'ai pensé qu'il serait plus pratique de d'abord développer totalement le débogueur, afin de m'en servir pour corriger cette erreur.
+J'ai également rencontré un problème avec les commandes liées aux caractères 'p' et 'g', cependant je ne m'en suis rendu compte que tard, lors du test avec \code{sieve.p2d}. En effet, tous les programmes fournis en exemple fonctionnaient, sauf celui-là qui imprimait une grille infinie de 0. Effectivement, ce programme est le seul à contenir des caractères 'p' et 'g'. J'ai pensé qu'il serait plus pratique de d'abord développer totalement le débogueur, afin de m'en servir pour corriger cette erreur.
 
 J'ai donc remarqué après développement de ce dernier que lors des commandes 'p' ou 'g', les coordonnées $x$ et $y$ du caractère ciblé sont inversées : après inversion de l'ordre de dépilement de $x$ et $y$ dans la pile, le problème était corrigé.
 
